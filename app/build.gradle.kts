@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.dagger)
 }
 
 android {
@@ -56,6 +58,10 @@ dependencies {
 
     // Compose Material
     implementation(libs.androidx.compose.material3)
+
+    // Dagger Hilt
+    implementation(libs.hilt)
+    ksp(libs.hilt.compiler)
 
     // Unit Testing
     testImplementation(libs.junit)
