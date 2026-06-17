@@ -65,6 +65,9 @@ dependencies {
     implementation(libs.androidx.hilt.lifecycle.viewmodel)
     implementation(libs.androidx.hilt.navigation.compose)
 
+    // Lottie
+    implementation(libs.lottie.compose)
+
     // Location Services
     implementation(libs.play.services.location)
 
