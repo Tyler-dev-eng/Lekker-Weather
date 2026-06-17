@@ -1,0 +1,31 @@
+# Built outputs
+build/
+app/build/
+*.apk
+*.aab
+*.aar
+
+# Local configuration (contains SDK path, should not be committed)
+local.properties
+
+# Gradle caches and wrapper
+.gradle/
+gradle/wrapper/gradle-wrapper.jar
+
+# Android Studio IDE files
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Keystore files (never commit signing keys)
+*.jks
+*.keystore
+
+# Generated files
+gen/
+out/
