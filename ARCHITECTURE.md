@@ -51,9 +51,11 @@ Core weather domain types.
 
 | File | Purpose |
 |---|---|
+| `WeatherData.kt` | Domain model for weather conditions at a single forecast hour. Holds time, temperature, pressure, humidity, wind speed, and a `WeatherType`. Produced by repository mappers from `WeatherDataDto`. |
+| `WeatherInfo.kt` | Aggregated forecast snapshot exposed to the presentation layer. Contains hourly `WeatherData` entries keyed by forecast day index, plus the current hour's conditions. |
 | `WeatherType.kt` | Sealed class of normalised weather conditions derived from WMO weather codes. Each variant holds a user-facing description and a Lottie animation resource ID. `WeatherType.fromWMO(code)` converts a raw API code into the correct type. |
 
-**What goes here as the project grows:** domain models (e.g. `WeatherData`, `WeatherInfo`), repository interfaces, use cases.
+**What goes here as the project grows:** repository interfaces, use cases.
 
 ---
 
