@@ -6,8 +6,10 @@ lekkerWeather follows **Clean Architecture** with three layers: `data`, `domain`
 app/src/main/java/com/tylerdev/lekkerweather/
 ├── data/
 │   ├── mappers/
-│   └── remote/
+│   ├── remote/
+│   └── repository/
 ├── domain/
+│   ├── repository/
 │   ├── util/
 │   └── weather/
 └── presentation/
@@ -42,7 +44,7 @@ Retrofit interface and Moshi DTOs for the [Open-Meteo](https://open-meteo.com) f
 | `WeatherDto.kt` | Root Moshi model for the API response. Wraps the `hourly` block. |
 | `WeatherDataDto.kt` | Moshi model for the `hourly` block. Parallel lists of timestamps, temperatures, weather codes, wind speeds, humidities, and pressures — all indexed by forecast hour. |
 
-**What goes here as the project grows:** additional `*Dto` classes for new endpoints, Retrofit/OkHttp setup (e.g. a `NetworkModule`), repository implementations.
+**What goes here as the project grows:** additional `*Dto` classes for new endpoints, Retrofit/OkHttp setup (e.g. a `NetworkModule`).
 
 ---
 
@@ -68,7 +70,31 @@ Core weather domain types.
 | `WeatherInfo.kt` | Aggregated forecast snapshot exposed to the presentation layer. Contains hourly `WeatherData` entries keyed by forecast day index, plus the current hour's conditions. |
 | `WeatherType.kt` | Sealed class of normalised weather conditions derived from WMO weather codes. Each variant holds a user-facing description and a Lottie animation resource ID. `WeatherType.fromWMO(code)` converts a raw API code into the correct type. |
 
-**What goes here as the project grows:** repository interfaces, use cases.
+**What goes here as the project grows:** use cases.
+
+---
+
+### `domain/repository/`
+
+Repository interfaces owned by the domain. Presentation code depends on these contracts, not on any data-layer class.
+
+| File | Purpose |
+|---|---|
+| `WeatherRepository.kt` | Declares `getWeatherData(lat, long)` returning `Resource<WeatherInfo>`. The single point of contact between domain/presentation and weather data. |
+
+**What goes here as the project grows:** additional repository interfaces for new data sources (e.g. location, user preferences).
+
+---
+
+## `data/repository/`
+
+Concrete implementations of domain repository interfaces. Wires together the remote API and mappers; wraps results in `Resource`.
+
+| File | Purpose |
+|---|---|
+| `WeatherRepositoryImpl.kt` | Implements `WeatherRepository`. Calls `WeatherApi`, maps the response via `WeatherDto.toWeatherInfo()`, and catches exceptions into `Resource.Error`. |
+
+**What goes here as the project grows:** additional `*RepositoryImpl` classes, local Room data source calls alongside remote ones.
 
 ---
 
