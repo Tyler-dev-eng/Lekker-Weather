@@ -1,4 +1,4 @@
-package com.tylerdev.lekkerweather.ui.theme
+package com.tylerdev.lekkerweather.presentation.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
