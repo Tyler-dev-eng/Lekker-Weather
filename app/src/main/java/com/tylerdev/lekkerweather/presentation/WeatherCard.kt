@@ -32,6 +32,17 @@ import com.tylerdev.lekkerweather.R
 import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 
+/**
+ * Card showing the current weather conditions from [state].
+ *
+ * Renders only when [WeatherState.weatherInfo] includes [com.tylerdev.lekkerweather.domain.weather.WeatherInfo.currentWeatherData].
+ * Displays the time, a Lottie animation for the condition, temperature, description, and pressure,
+ * humidity, and wind speed via [WeatherDataDisplay].
+ *
+ * @param state Screen state from [WeatherViewModel].
+ * @param backgroundColor Card container colour.
+ * @param modifier Optional layout modifier for the card.
+ */
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun WeatherCard(

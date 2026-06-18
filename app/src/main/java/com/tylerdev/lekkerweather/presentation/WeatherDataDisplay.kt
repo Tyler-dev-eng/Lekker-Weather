@@ -16,6 +16,18 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 
+/**
+ * Compact row that displays a weather metric with an icon, value, and unit.
+ *
+ * Used inside [WeatherCard] for pressure, humidity, and wind speed.
+ *
+ * @param value Numeric reading to show.
+ * @param unit Suffix appended to [value] (e.g. `"hpa"`, `"%"`, `"km/h"`).
+ * @param modifier Optional layout modifier for the row.
+ * @param textStyle Typography for the value and unit text.
+ * @param icon Leading icon representing the metric.
+ * @param iconTint Colour applied to [icon].
+ */
 @Composable
 fun WeatherDataDisplay(
     value: Int,
