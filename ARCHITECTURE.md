@@ -4,11 +4,15 @@ lekkerWeather follows **Clean Architecture** with three layers: `data`, `domain`
 
 ```
 app/src/main/java/com/tylerdev/lekkerweather/
+├── WeatherApp.kt
 ├── data/
+│   ├── location/
 │   ├── mappers/
 │   ├── remote/
 │   └── repository/
+├── di/
 ├── domain/
+│   ├── location/
 │   ├── repository/
 │   ├── util/
 │   └── weather/
@@ -18,9 +22,25 @@ app/src/main/java/com/tylerdev/lekkerweather/
 
 ---
 
+## Root
+
+| File | Purpose |
+|---|---|
+| `WeatherApp.kt` | `Application` subclass annotated with `@HiltAndroidApp`. Required for Hilt to generate the component graph from modules in `di/`. |
+
+---
+
 ## `data/`
 
 Responsible for all I/O. Nothing in this layer leaks into `domain` or `presentation` — raw API types are mapped into domain models before crossing the boundary.
+
+### `data/location/`
+
+Data-layer implementation of the domain `LocationTracker` contract.
+
+| File | Purpose |
+|---|---|
+| `DefaultLocationTracker.kt` | Uses `FusedLocationProviderClient` to return the device's last known location. Checks fine/coarse permissions and verifies that GPS or network providers are enabled before requesting a fix; returns null when any prerequisite is missing. |
 
 ### `data/mappers/`
 
@@ -31,8 +51,6 @@ Extension functions that translate remote DTOs into domain models. Keeping mappi
 | `WeatherMappers.kt` | `WeatherDataDto.toWeatherDataMap()` — zips the parallel hourly lists into `WeatherData` objects grouped by forecast day index. `WeatherDto.toWeatherInfo()` — builds the full `WeatherInfo` snapshot, including resolving the current hour's conditions. |
 
 **What goes here as the project grows:** additional `*Mappers.kt` files for each new remote data source or DTO type.
-
----
 
 ### `data/remote/`
 
@@ -46,11 +64,51 @@ Retrofit interface and Moshi DTOs for the [Open-Meteo](https://open-meteo.com) f
 
 **What goes here as the project grows:** additional `*Dto` classes for new endpoints, Retrofit/OkHttp setup (e.g. a `NetworkModule`).
 
+### `data/repository/`
+
+Concrete implementations of domain repository interfaces. Wires together the remote API and mappers; wraps results in `Resource`.
+
+| File | Purpose |
+|---|---|
+| `WeatherRepositoryImpl.kt` | Implements `WeatherRepository`. Calls `WeatherApi`, maps the response via `WeatherDto.toWeatherInfo()`, and catches exceptions into `Resource.Error`. |
+
+**What goes here as the project grows:** additional `*RepositoryImpl` classes, local Room data source calls alongside remote ones.
+
+---
+
+## `di/`
+
+Hilt modules that wire the dependency graph. All modules install into `SingletonComponent` so dependencies are app-scoped singletons.
+
+| File | Purpose |
+|---|---|
+| `AppModule.kt` | Provides the Retrofit-backed `WeatherApi` (pointed at `api.open-meteo.com`) and the `FusedLocationProviderClient` from Play Services. |
+| `LocationModule.kt` | Binds `DefaultLocationTracker` as the implementation of the `LocationTracker` interface. |
+| `RepositoryModule.kt` | Binds `WeatherRepositoryImpl` as the implementation of the `WeatherRepository` interface. |
+
+**What goes here as the project grows:** additional modules for new data sources (e.g. a `DatabaseModule` for Room).
+
 ---
 
 ## `domain/`
 
 Pure Kotlin business logic with no Android or framework dependencies. This is the stable core — `data` and `presentation` both depend on it, never the other way around.
+
+### `domain/location/`
+
+| File | Purpose |
+|---|---|
+| `LocationTracker.kt` | Domain contract for reading the device's current position. Returns a nullable `Location`; implementations live in `data/location/`. |
+
+### `domain/repository/`
+
+Repository interfaces owned by the domain. Presentation code depends on these contracts, not on any data-layer class.
+
+| File | Purpose |
+|---|---|
+| `WeatherRepository.kt` | Declares `getWeatherData(lat, long)` returning `Resource<WeatherInfo>`. The single point of contact between domain/presentation and weather data. |
+
+**What goes here as the project grows:** additional repository interfaces for new data sources.
 
 ### `domain/util/`
 
@@ -71,30 +129,6 @@ Core weather domain types.
 | `WeatherType.kt` | Sealed class of normalised weather conditions derived from WMO weather codes. Each variant holds a user-facing description and a Lottie animation resource ID. `WeatherType.fromWMO(code)` converts a raw API code into the correct type. |
 
 **What goes here as the project grows:** use cases.
-
----
-
-### `domain/repository/`
-
-Repository interfaces owned by the domain. Presentation code depends on these contracts, not on any data-layer class.
-
-| File | Purpose |
-|---|---|
-| `WeatherRepository.kt` | Declares `getWeatherData(lat, long)` returning `Resource<WeatherInfo>`. The single point of contact between domain/presentation and weather data. |
-
-**What goes here as the project grows:** additional repository interfaces for new data sources (e.g. location, user preferences).
-
----
-
-## `data/repository/`
-
-Concrete implementations of domain repository interfaces. Wires together the remote API and mappers; wraps results in `Resource`.
-
-| File | Purpose |
-|---|---|
-| `WeatherRepositoryImpl.kt` | Implements `WeatherRepository`. Calls `WeatherApi`, maps the response via `WeatherDto.toWeatherInfo()`, and catches exceptions into `Resource.Error`. |
-
-**What goes here as the project grows:** additional `*RepositoryImpl` classes, local Room data source calls alongside remote ones.
 
 ---
 
