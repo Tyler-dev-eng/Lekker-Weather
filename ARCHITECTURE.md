@@ -5,6 +5,7 @@ lekkerWeather follows **Clean Architecture** with three layers: `data`, `domain`
 ```
 app/src/main/java/com/tylerdev/lekkerweather/
 ├── data/
+│   ├── mappers/
 │   └── remote/
 ├── domain/
 │   ├── util/
@@ -19,6 +20,18 @@ app/src/main/java/com/tylerdev/lekkerweather/
 
 Responsible for all I/O. Nothing in this layer leaks into `domain` or `presentation` — raw API types are mapped into domain models before crossing the boundary.
 
+### `data/mappers/`
+
+Extension functions that translate remote DTOs into domain models. Keeping mapping logic here prevents it from leaking into either the repository or the DTOs themselves.
+
+| File | Purpose |
+|---|---|
+| `WeatherMappers.kt` | `WeatherDataDto.toWeatherDataMap()` — zips the parallel hourly lists into `WeatherData` objects grouped by forecast day index. `WeatherDto.toWeatherInfo()` — builds the full `WeatherInfo` snapshot, including resolving the current hour's conditions. |
+
+**What goes here as the project grows:** additional `*Mappers.kt` files for each new remote data source or DTO type.
+
+---
+
 ### `data/remote/`
 
 Retrofit interface and Moshi DTOs for the [Open-Meteo](https://open-meteo.com) forecast API.
@@ -29,7 +42,7 @@ Retrofit interface and Moshi DTOs for the [Open-Meteo](https://open-meteo.com) f
 | `WeatherDto.kt` | Root Moshi model for the API response. Wraps the `hourly` block. |
 | `WeatherDataDto.kt` | Moshi model for the `hourly` block. Parallel lists of timestamps, temperatures, weather codes, wind speeds, humidities, and pressures — all indexed by forecast hour. |
 
-**What goes here as the project grows:** repository implementations, additional `*Dto` classes for new endpoints, Retrofit/OkHttp setup (e.g. a `NetworkModule`).
+**What goes here as the project grows:** additional `*Dto` classes for new endpoints, Retrofit/OkHttp setup (e.g. a `NetworkModule`), repository implementations.
 
 ---
 
