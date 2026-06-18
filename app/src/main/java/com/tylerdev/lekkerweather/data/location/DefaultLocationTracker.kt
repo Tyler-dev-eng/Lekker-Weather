@@ -12,10 +12,21 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
 import kotlin.coroutines.resume
 
+/**
+ * Data-layer implementation of [LocationTracker] backed by Google Play Services.
+ *
+ * Uses [FusedLocationProviderClient] to read the last known location after verifying fine and coarse
+ * location permissions and that network or GPS providers are enabled. Returns null when any prerequisite
+ * is missing or the location request fails.
+ */
 class DefaultLocationTracker @Inject constructor(
     private val locationClient: FusedLocationProviderClient,
     private val application: Application
 ): LocationTracker {
+
+    /**
+     * @see LocationTracker.getCurrentLocation
+     */
     override suspend fun getCurrentLocation(): Location? {
         val hasAccessFineLocationPermission = ContextCompat.checkSelfPermission(
             application,
