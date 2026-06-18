@@ -136,11 +136,13 @@ Core weather domain types.
 
 Jetpack Compose UI layer. Observes domain state and renders it — no business logic lives here.
 
-| File                  | Purpose                                                                                                                                                                                 |
-|-----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `MainActivity.kt`     | Single-activity entry point. Sets up the Compose content root with `LekkerWeatherTheme`.                                                                                                |
-| `WeatherViewModel.kt` | `@HiltViewModel` that resolves the device's location via `LocationTracker`, fetches forecast data through `WeatherRepository`, and exposes `WeatherState` via Compose `mutableStateOf`. |
-| `WeatherState.kt`     | UI state data class holding `weatherInfo`, `isLoading`, and `error`. The single source of truth Compose reads to render the weather screen.                                             |
+| File                    | Purpose                                                                                                                                                                                 |
+|-------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `MainActivity.kt`       | Single-activity entry point. Sets up the Compose content root with `LekkerWeatherTheme`.                                                                                                |
+| `WeatherViewModel.kt`   | `@HiltViewModel` that resolves the device's location via `LocationTracker`, fetches forecast data through `WeatherRepository`, and exposes `WeatherState` via Compose `mutableStateOf`. |
+| `WeatherState.kt`       | UI state data class holding `weatherInfo`, `isLoading`, and `error`. The single source of truth Compose reads to render the weather screen.                                             |
+| `WeatherCard.kt`        | Composable card showing current conditions — time, Lottie animation, temperature, description, and the three `WeatherDataDisplay` metrics. Renders only when current data is available. |
+| `WeatherDataDisplay.kt` | Reusable composable row displaying a single weather metric as an icon + value + unit. Used by `WeatherCard` for pressure, humidity, and wind speed.                                     |
 
 ### `presentation/ui/theme/`
 
