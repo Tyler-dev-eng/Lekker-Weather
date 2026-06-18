@@ -57,7 +57,6 @@ class WeatherViewModel @Inject constructor(
                             error = result.message
                         )
                     }
-
                     is Resource.Loading -> {
                         state = state.copy(
                             weatherInfo = null,
@@ -66,7 +65,7 @@ class WeatherViewModel @Inject constructor(
                         )
                     }
                 }
-            } ?: kotlin.run {
+            } ?: run {
                 state = state.copy(
                     isLoading = false,
                     error = "Couldn't retrieve location. Make sure to grant permission and enable GPS."

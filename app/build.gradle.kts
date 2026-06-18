@@ -8,12 +8,7 @@ plugins {
 
 android {
     namespace = "com.tylerdev.lekkerweather"
-    compileSdk {
-        version =
-            release(36) {
-                minorApiLevel = 1
-            }
-    }
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.tylerdev.lekkerweather"
@@ -76,6 +71,7 @@ dependencies {
     // Retrofit
     implementation(libs.retrofit)
     implementation(libs.converter.moshi)
+    implementation(libs.moshi.kotlin)
     implementation(libs.logging.interceptor)
 
     implementation(libs.androidx.lifecycle.viewmodel.compose)
