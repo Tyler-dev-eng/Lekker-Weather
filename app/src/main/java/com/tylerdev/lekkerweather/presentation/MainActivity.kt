@@ -11,6 +11,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -62,7 +63,7 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize()
                         .background(DarkBlue)
                 ) {
-                    Column(modifier = Modifier.fillMaxSize()) {
+                    Column(modifier = Modifier.fillMaxSize().padding(top = 32.dp)) {
                         WeatherCard(
                             state = viewModel.state,
                             backgroundColor = DeepBlue
