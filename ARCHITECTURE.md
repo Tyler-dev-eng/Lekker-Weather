@@ -36,11 +36,12 @@ Responsible for all I/O. Nothing in this layer leaks into `domain` or `presentat
 
 ### `data/location/`
 
-Data-layer implementation of the domain `LocationTracker` contract.
+Data-layer implementations of domain location contracts.
 
-| File                        | Purpose                                                                                                                                                                                                                                      |
-|-----------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `DefaultLocationTracker.kt` | Uses `FusedLocationProviderClient` to return the device's last known location. Checks fine/coarse permissions and verifies that GPS or network providers are enabled before requesting a fix; returns null when any prerequisite is missing. |
+| File                              | Purpose                                                                                                                                                                                                                                      |
+|-----------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `DefaultLocationTracker.kt`       | Uses `FusedLocationProviderClient` to return the device's last known location. Checks fine/coarse permissions and verifies that GPS or network providers are enabled before requesting a fix; returns null when any prerequisite is missing. |
+| `GeocoderLocationNameProvider.kt` | Implements `LocationNameProvider` using Android's `Geocoder` to reverse-geocode a lat/lon into a city name. Handles the API 33+ async path and the legacy synchronous path on a background dispatcher.                                       |
 
 ### `data/mappers/`
 
@@ -62,7 +63,7 @@ Retrofit interface and Moshi DTOs for the [Open-Meteo](https://open-meteo.com) f
 | `WeatherDto.kt`     | Root Moshi model for the API response. Wraps the `hourly` block.                                                                                                      |
 | `WeatherDataDto.kt` | Moshi model for the `hourly` block. Parallel lists of timestamps, temperatures, weather codes, wind speeds, humidities, and pressures — all indexed by forecast hour. |
 
-**What goes here as the project grows:** additional `*Dto` classes for new endpoints, Retrofit/OkHttp setup (e.g. a `NetworkModule`).
+**What goes here as the project grows:** additional `*Dto` classes for new endpoints.
 
 ### `data/repository/`
 
@@ -80,11 +81,11 @@ Concrete implementations of domain repository interfaces. Wires together the rem
 
 Hilt modules that wire the dependency graph. All modules install into `SingletonComponent` so dependencies are app-scoped singletons.
 
-| File                  | Purpose                                                                                                                               |
-|-----------------------|---------------------------------------------------------------------------------------------------------------------------------------|
-| `AppModule.kt`        | Provides the Retrofit-backed `WeatherApi` (pointed at `api.open-meteo.com`) and the `FusedLocationProviderClient` from Play Services. |
-| `LocationModule.kt`   | Binds `DefaultLocationTracker` as the implementation of the `LocationTracker` interface.                                              |
-| `RepositoryModule.kt` | Binds `WeatherRepositoryImpl` as the implementation of the `WeatherRepository` interface.                                             |
+| File                  | Purpose                                                                                                                                                                |
+|-----------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `AppModule.kt`        | Provides the Retrofit-backed `WeatherApi` (with OkHttp logging interceptor) pointed at `api.open-meteo.com`, and the `FusedLocationProviderClient` from Play Services. |
+| `LocationModule.kt`   | Binds `DefaultLocationTracker` as the implementation of `LocationTracker`, and `GeocoderLocationNameProvider` as the implementation of `LocationNameProvider`.         |
+| `RepositoryModule.kt` | Binds `WeatherRepositoryImpl` as the implementation of `WeatherRepository`.                                                                                            |
 
 **What goes here as the project grows:** additional modules for new data sources (e.g. a `DatabaseModule` for Room).
 
@@ -96,9 +97,10 @@ Pure Kotlin business logic with no Android or framework dependencies. This is th
 
 ### `domain/location/`
 
-| File                 | Purpose                                                                                                                             |
-|----------------------|-------------------------------------------------------------------------------------------------------------------------------------|
-| `LocationTracker.kt` | Domain contract for reading the device's current position. Returns a nullable `Location`; implementations live in `data/location/`. |
+| File                      | Purpose                                                                                                                                        |
+|---------------------------|------------------------------------------------------------------------------------------------------------------------------------------------|
+| `LocationTracker.kt`      | Domain contract for reading the device's current position. Returns a nullable `Location`; implementations live in `data/location/`.            |
+| `LocationNameProvider.kt` | Domain contract for reverse-geocoding a lat/lon into a human-readable city name. Returns a nullable `String`; implemented in `data/location/`. |
 
 ### `domain/repository/`
 
@@ -122,11 +124,11 @@ General-purpose utilities shared across the domain.
 
 Core weather domain types.
 
-| File             | Purpose                                                                                                                                                                                                                                   |
-|------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `WeatherData.kt` | Domain model for weather conditions at a single forecast hour. Holds time, temperature, pressure, humidity, wind speed, and a `WeatherType`. Produced by repository mappers from `WeatherDataDto`.                                        |
-| `WeatherInfo.kt` | Aggregated forecast snapshot exposed to the presentation layer. Contains hourly `WeatherData` entries keyed by forecast day index, plus the current hour's conditions.                                                                    |
-| `WeatherType.kt` | Sealed class of normalised weather conditions derived from WMO weather codes. Each variant holds a user-facing description and a Lottie animation resource ID. `WeatherType.fromWMO(code)` converts a raw API code into the correct type. |
+| File             | Purpose                                                                                                                                                                                                                                                                                                            |
+|------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `WeatherData.kt` | Domain model for weather conditions at a single forecast hour. Holds time, temperature, pressure, humidity, wind speed, and a `WeatherType`.                                                                                                                                                                       |
+| `WeatherInfo.kt` | Aggregated forecast snapshot exposed to the presentation layer. Contains hourly `WeatherData` entries keyed by forecast day index, plus the current hour's conditions.                                                                                                                                             |
+| `WeatherType.kt` | Sealed class of normalised weather conditions derived from WMO weather codes. Each variant holds a user-facing description and separate day/night Lottie animation resource IDs (`animRes`, `nightAnimRes`). `animResFor(isNight)` picks the correct animation. `fromWMO(code)` converts a raw API code to a type. |
 
 **What goes here as the project grows:** use cases.
 
@@ -136,13 +138,17 @@ Core weather domain types.
 
 Jetpack Compose UI layer. Observes domain state and renders it — no business logic lives here.
 
-| File                    | Purpose                                                                                                                                                                                 |
-|-------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `MainActivity.kt`       | Single-activity entry point. Sets up the Compose content root with `LekkerWeatherTheme`.                                                                                                |
-| `WeatherViewModel.kt`   | `@HiltViewModel` that resolves the device's location via `LocationTracker`, fetches forecast data through `WeatherRepository`, and exposes `WeatherState` via Compose `mutableStateOf`. |
-| `WeatherState.kt`       | UI state data class holding `weatherInfo`, `isLoading`, and `error`. The single source of truth Compose reads to render the weather screen.                                             |
-| `WeatherCard.kt`        | Composable card showing current conditions — time, Lottie animation, temperature, description, and the three `WeatherDataDisplay` metrics. Renders only when current data is available. |
-| `WeatherDataDisplay.kt` | Reusable composable row displaying a single weather metric as an icon + value + unit. Used by `WeatherCard` for pressure, humidity, and wind speed.                                     |
+| File                      | Purpose                                                                                                                                                                                                                                     |
+|---------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `MainActivity.kt`         | Single-activity entry point. Hosts a `PullToRefreshBox` wrapping a `LazyColumn` with `WeatherCard`, `WeatherForecast`, and `WeeklyForecast`. Handles edge-to-edge insets via `navigationBars` content padding.                              |
+| `WeatherViewModel.kt`     | `@HiltViewModel` that resolves location via `LocationTracker`, reverse-geocodes it via `LocationNameProvider`, fetches forecast data through `WeatherRepository`, and exposes `WeatherState` via Compose `mutableStateOf`.                  |
+| `WeatherState.kt`         | UI state data class holding `weatherInfo`, `isLoading`, `error`, and `locationName`. The single source of truth Compose reads to render the weather screen.                                                                                 |
+| `WeatherCard.kt`          | Card showing current conditions — location pin + city name, time, Lottie animation (day or night), temperature, description, and the three `WeatherDataDisplay` metrics. Pressure animation switches between high/low based on the reading. |
+| `WeatherDataDisplay.kt`   | Reusable row displaying a single weather metric as a Lottie animation + value + unit. Supports an optional `animationSize` override and an optional `animationTint` colour filter.                                                          |
+| `WeatherForecast.kt`      | Horizontal `LazyRow` of today's hourly forecast using `HourlyWeatherDisplay`.                                                                                                                                                               |
+| `HourlyWeatherDisplay.kt` | Single hourly slot: time, Lottie animation (day or night based on the entry's hour), and temperature.                                                                                                                                       |
+| `WeeklyForecast.kt`       | Vertical list of days 1–6 from `weatherDataPerDay`, each rendered by `DailyWeatherDisplay`.                                                                                                                                                 |
+| `DailyWeatherDisplay.kt`  | Single daily row: day name, noon-representative Lottie animation (daytime), and min°/max° temperature range derived from all hourly entries for that day.                                                                                   |
 
 ### `presentation/ui/theme/`
 
@@ -162,11 +168,15 @@ Material 3 theming applied app-wide.
 
 ### `res/raw/`
 
-Lottie animation JSON files (`anim_*.json`), one per weather condition. Referenced by `WeatherType` via `@RawRes` IDs so the UI layer can play them without knowing the file names directly.
+Lottie animation JSON files. Weather condition animations come in day (`anim_*.json`) and night variants, referenced by `WeatherType` via `@RawRes` IDs. Utility animations (`circle_loader.json`) are also stored here.
 
 ### `res/drawable/`
 
 Static vector icon fallbacks (`ic_*.xml`) for weather conditions and UI elements (wind, pressure, rain drop).
+
+### `res/values/` and `res/values-v31/`
+
+`colors.xml` defines the app palette including `splash_background` (`#2D7DB4`). `themes.xml` sets `windowBackground` for pre-API-31 devices; the `values-v31` override adds `windowSplashScreenBackground` for the Android 12+ splash screen API.
 
 ### `res/mipmap-*/`
 

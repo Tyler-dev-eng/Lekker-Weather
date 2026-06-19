@@ -20,8 +20,6 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.tylerdev.lekkerweather.domain.weather.WeatherData
-import java.time.format.TextStyle
-import java.util.Locale
 import kotlin.math.roundToInt
 
 @RequiresApi(Build.VERSION_CODES.O)
