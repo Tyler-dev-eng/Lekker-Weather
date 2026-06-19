@@ -36,3 +36,4 @@ out/
 .gradle/9.4.1/fileHashes/resourceHashesCache.bin
 .gradle/buildOutputCleanup/buildOutputCleanup.lock
 /.gradle/9.4.1
+CLAUDE.md
