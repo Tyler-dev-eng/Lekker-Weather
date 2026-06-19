@@ -1,5 +1,6 @@
 package com.tylerdev.lekkerweather.presentation
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -7,14 +8,18 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
@@ -46,6 +51,7 @@ class MainActivity : ComponentActivity() {
 
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -65,14 +71,25 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize()
                         .background(DarkBlue)
                 ) {
-                    Column(modifier = Modifier.fillMaxSize().padding(top = 32.dp)) {
-                        WeatherCard(
-                            state = viewModel.state,
-                            backgroundColor = DeepBlue,
-                            locationName = viewModel.state.locationName
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        WeatherForecast(state = viewModel.state, modifier = Modifier)
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize().padding(top = 32.dp),
+                        contentPadding = WindowInsets.navigationBars.asPaddingValues()
+                    ) {
+                        item {
+                            WeatherCard(
+                                state = viewModel.state,
+                                backgroundColor = DeepBlue,
+                                locationName = viewModel.state.locationName
+                            )
+                        }
+                        item {
+                            Spacer(modifier = Modifier.height(16.dp))
+                            WeatherForecast(state = viewModel.state, modifier = Modifier)
+                        }
+                        item {
+                            Spacer(modifier = Modifier.height(16.dp))
+                            WeeklyForecast(state = viewModel.state)
+                        }
                     }
                     if (viewModel.state.isLoading) {
                         val composition by rememberLottieComposition(
