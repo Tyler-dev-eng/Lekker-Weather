@@ -76,27 +76,38 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize()
                         .background(DarkBlue)
                 ) {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize().padding(top = 32.dp),
-                        contentPadding = WindowInsets.navigationBars.asPaddingValues()
-                    ) {
-                        item {
-                            WeatherCard(
-                                state = viewModel.state,
-                                backgroundColor = DeepBlue,
-                                locationName = viewModel.state.locationName
+                    val state = viewModel.state
+                    when {
+                        state.error != null && !state.isLoading -> {
+                            ErrorScreen(
+                                message = state.error,
+                                onRetry = { viewModel.loadWeatherInfo() }
                             )
                         }
-                        item {
-                            Spacer(modifier = Modifier.height(16.dp))
-                            WeatherForecast(state = viewModel.state, modifier = Modifier)
-                        }
-                        item {
-                            Spacer(modifier = Modifier.height(16.dp))
-                            WeeklyForecast(state = viewModel.state)
+                        else -> {
+                            LazyColumn(
+                                modifier = Modifier.fillMaxSize().padding(top = 32.dp),
+                                contentPadding = WindowInsets.navigationBars.asPaddingValues()
+                            ) {
+                                item {
+                                    WeatherCard(
+                                        state = state,
+                                        backgroundColor = DeepBlue,
+                                        locationName = state.locationName
+                                    )
+                                }
+                                item {
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                    WeatherForecast(state = state, modifier = Modifier)
+                                }
+                                item {
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                    WeeklyForecast(state = state)
+                                }
+                            }
                         }
                     }
-                    if (viewModel.state.isLoading) {
+                    if (state.isLoading) {
                         val composition by rememberLottieComposition(
                             LottieCompositionSpec.RawRes(R.raw.circle_loader)
                         )
