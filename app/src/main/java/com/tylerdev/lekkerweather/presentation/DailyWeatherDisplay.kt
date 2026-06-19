@@ -29,11 +29,17 @@ fun DailyWeatherDisplay(
     entries: List<WeatherData>,
     modifier: Modifier = Modifier
 ) {
-    val noon = entries.minByOrNull { kotlin.math.abs(it.time.hour - 12) } ?: return
+    val dominantWeatherType = entries
+        .filter { it.isDay }
+        .groupingBy { it.weatherType }
+        .eachCount()
+        .maxByOrNull { it.value }
+        ?.key
+        ?: entries.first().weatherType
     val minTemp = entries.minOf { it.temperatureCelsius }.roundToInt()
     val maxTemp = entries.maxOf { it.temperatureCelsius }.roundToInt()
     val composition by rememberLottieComposition(
-        LottieCompositionSpec.RawRes(noon.weatherType.animRes)
+        LottieCompositionSpec.RawRes(dominantWeatherType.animRes)
     )
 
     Row(
