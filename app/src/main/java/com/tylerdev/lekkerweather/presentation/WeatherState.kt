@@ -15,5 +15,6 @@ import com.tylerdev.lekkerweather.domain.weather.WeatherInfo
 data class WeatherState(
     val weatherInfo: WeatherInfo? = null,
     val isLoading: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    val locationName: String? = null
 )

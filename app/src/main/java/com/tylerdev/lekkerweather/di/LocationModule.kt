@@ -1,6 +1,8 @@
 package com.tylerdev.lekkerweather.di
 
 import com.tylerdev.lekkerweather.data.location.DefaultLocationTracker
+import com.tylerdev.lekkerweather.data.location.GeocoderLocationNameProvider
+import com.tylerdev.lekkerweather.domain.location.LocationNameProvider
 import com.tylerdev.lekkerweather.domain.location.LocationTracker
 import dagger.Binds
 import dagger.Module
@@ -19,4 +21,9 @@ abstract class LocationModule {
     @Binds
     @Singleton
     abstract fun bindLocationTracker(defaultLocationTracker: DefaultLocationTracker): LocationTracker
+
+    /** Supplies [GeocoderLocationNameProvider] wherever [LocationNameProvider] is injected. */
+    @Binds
+    @Singleton
+    abstract fun bindLocationNameProvider(geocoderLocationNameProvider: GeocoderLocationNameProvider): LocationNameProvider
 }

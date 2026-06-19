@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.tylerdev.lekkerweather.domain.location.LocationNameProvider
 import com.tylerdev.lekkerweather.domain.location.LocationTracker
 import com.tylerdev.lekkerweather.domain.repository.WeatherRepository
 import com.tylerdev.lekkerweather.domain.util.Resource
@@ -21,7 +22,8 @@ import javax.inject.Inject
 @HiltViewModel
 class WeatherViewModel @Inject constructor(
     private val repository: WeatherRepository,
-    private val locationTracker: LocationTracker
+    private val locationTracker: LocationTracker,
+    private val locationNameProvider: LocationNameProvider
 ): ViewModel() {
 
     /** Observable UI state for the weather screen. Updated only from this ViewModel. */
@@ -42,12 +44,14 @@ class WeatherViewModel @Inject constructor(
             )
 
             locationTracker.getCurrentLocation()?.let { location ->
+                val locationName = locationNameProvider.getLocationName(location.latitude, location.longitude)
                 when(val result = repository.getWeatherData(location.latitude, location.longitude)) {
                     is Resource.Success -> {
                         state = state.copy(
                             weatherInfo = result.data,
                             isLoading = false,
-                            error = null
+                            error = null,
+                            locationName = locationName
                         )
                     }
                     is Resource.Error -> {

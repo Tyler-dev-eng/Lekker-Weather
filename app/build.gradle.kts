@@ -55,6 +55,7 @@ dependencies {
 
     // Compose Material
     implementation(libs.androidx.compose.material3)
+    implementation(libs.material.icons.extended)
 
     // Dagger Hilt
     implementation(libs.hilt)
