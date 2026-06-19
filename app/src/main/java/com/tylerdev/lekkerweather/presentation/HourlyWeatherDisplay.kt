@@ -32,8 +32,9 @@ fun HourlyWeatherDisplay(
         weatherData.time.format(DateTimeFormatter.ofPattern("HH:mm"))
     }
 
+    val isNight = weatherData.time.hour !in 6..<20
     val composition by rememberLottieComposition(
-        LottieCompositionSpec.RawRes(weatherData.weatherType.animRes)
+        LottieCompositionSpec.RawRes(weatherData.weatherType.animResFor(isNight))
     )
 
     Column(

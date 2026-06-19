@@ -7,134 +7,157 @@ import com.tylerdev.lekkerweather.R
  * Normalised weather condition derived from [WMO Weather interpretation codes](https://open-meteo.com/en/docs)
  * (WW codes) returned by Open-Meteo and similar forecast APIs.
  *
- * Each variant pairs a user-facing [weatherDesc] with a Lottie [animRes] for UI rendering.
- * Use [fromWMO] to convert an API weather code into the matching type.
+ * Each variant pairs a user-facing [weatherDesc] with day and night Lottie animations.
+ * Use [animResFor] to pick the correct animation, and [fromWMO] to map an API code.
  *
  * @property weatherDesc Human-readable description shown in the app.
- * @property animRes Raw resource ID for the Lottie animation JSON.
+ * @property animRes Raw resource ID for the daytime Lottie animation.
+ * @property nightAnimRes Raw resource ID for the night-time Lottie animation.
  */
 sealed class WeatherType(
     val weatherDesc: String,
-    @param:RawRes val animRes: Int
+    @param:RawRes val animRes: Int,
+    @param:RawRes val nightAnimRes: Int
 ) {
+    fun animResFor(isNight: Boolean) = if (isNight) nightAnimRes else animRes
+
     object ClearSky : WeatherType(
         weatherDesc = "Clear sky",
-        animRes = R.raw.anim_clear_sky
+        animRes = R.raw.anim_clear_sky,
+        nightAnimRes = R.raw.anim_clear_night
     )
     object MainlyClear : WeatherType(
         weatherDesc = "Mainly clear",
-        animRes = R.raw.anim_cloudy
+        animRes = R.raw.anim_cloudy,
+        nightAnimRes = R.raw.anim_mostly_clear_night
     )
     object PartlyCloudy : WeatherType(
         weatherDesc = "Partly cloudy",
-        animRes = R.raw.anim_partly_cloudy
+        animRes = R.raw.anim_partly_cloudy,
+        nightAnimRes = R.raw.anim_partly_cloudy_night
     )
     object Overcast : WeatherType(
         weatherDesc = "Overcast",
-        animRes = R.raw.anim_overcast
+        animRes = R.raw.anim_overcast,
+        nightAnimRes = R.raw.anim_overcast_night
     )
     object Foggy : WeatherType(
         weatherDesc = "Foggy",
-        animRes = R.raw.anim_foggy
+        animRes = R.raw.anim_foggy,
+        nightAnimRes = R.raw.anim_fog_night
     )
     object DepositingRimeFog : WeatherType(
         weatherDesc = "Depositing rime fog",
-        animRes = R.raw.anim_foggy
+        animRes = R.raw.anim_foggy,
+        nightAnimRes = R.raw.anim_fog_night
     )
     object LightDrizzle : WeatherType(
         weatherDesc = "Light drizzle",
-        animRes = R.raw.anim_light_drizzle
+        animRes = R.raw.anim_light_drizzle,
+        nightAnimRes = R.raw.anim_mostly_clear_drizzle_night
     )
     object ModerateDrizzle : WeatherType(
         weatherDesc = "Moderate drizzle",
-        animRes = R.raw.anim_light_drizzle
+        animRes = R.raw.anim_light_drizzle,
+        nightAnimRes = R.raw.anim_mostly_clear_drizzle_night
     )
     object DenseDrizzle : WeatherType(
         weatherDesc = "Dense drizzle",
-        animRes = R.raw.anim_light_drizzle
+        animRes = R.raw.anim_light_drizzle,
+        nightAnimRes = R.raw.anim_overcast_drizzle_night
     )
     object LightFreezingDrizzle : WeatherType(
         weatherDesc = "Slight freezing drizzle",
-        animRes = R.raw.anim_light_drizzle
+        animRes = R.raw.anim_light_drizzle,
+        nightAnimRes = R.raw.anim_overcast_drizzle_night
     )
     object DenseFreezingDrizzle : WeatherType(
         weatherDesc = "Dense freezing drizzle",
-        animRes = R.raw.anim_light_drizzle
+        animRes = R.raw.anim_light_drizzle,
+        nightAnimRes = R.raw.anim_overcast_drizzle_night
     )
     object SlightRain : WeatherType(
         weatherDesc = "Slight rain",
-        animRes = R.raw.anim_rainy
+        animRes = R.raw.anim_rainy,
+        nightAnimRes = R.raw.anim_mostly_clear_rain_night
     )
     object ModerateRain : WeatherType(
         weatherDesc = "Rainy",
-        animRes = R.raw.anim_rainy
+        animRes = R.raw.anim_rainy,
+        nightAnimRes = R.raw.anim_mostly_clear_rain_night
     )
     object HeavyRain : WeatherType(
         weatherDesc = "Heavy rain",
-        animRes = R.raw.anim_heavy_rain
+        animRes = R.raw.anim_heavy_rain,
+        nightAnimRes = R.raw.anim_overcast_rain_night
     )
     object HeavyFreezingRain : WeatherType(
         weatherDesc = "Heavy freezing rain",
-        animRes = R.raw.anim_heavy_rain
+        animRes = R.raw.anim_heavy_rain,
+        nightAnimRes = R.raw.anim_overcast_rain_night
     )
     object SlightSnowFall : WeatherType(
         weatherDesc = "Slight snow fall",
-        animRes = R.raw.anim_snowy
+        animRes = R.raw.anim_snowy,
+        nightAnimRes = R.raw.anim_mostly_clear_snow_night
     )
     object ModerateSnowFall : WeatherType(
         weatherDesc = "Moderate snow fall",
-        animRes = R.raw.anim_heavysnow
+        animRes = R.raw.anim_heavysnow,
+        nightAnimRes = R.raw.anim_overcast_snow_night
     )
     object HeavySnowFall : WeatherType(
         weatherDesc = "Heavy snow fall",
-        animRes = R.raw.anim_heavysnow
+        animRes = R.raw.anim_heavysnow,
+        nightAnimRes = R.raw.anim_overcast_snow_night
     )
     object SnowGrains : WeatherType(
         weatherDesc = "Snow grains",
-        animRes = R.raw.anim_heavysnow
+        animRes = R.raw.anim_heavysnow,
+        nightAnimRes = R.raw.anim_overcast_snow_night
     )
     object SlightRainShowers : WeatherType(
         weatherDesc = "Slight rain showers",
-        animRes = R.raw.anim_heavy_rain
+        animRes = R.raw.anim_heavy_rain,
+        nightAnimRes = R.raw.anim_mostly_clear_rain_night
     )
     object ModerateRainShowers : WeatherType(
         weatherDesc = "Moderate rain showers",
-        animRes = R.raw.anim_heavy_rain
+        animRes = R.raw.anim_heavy_rain,
+        nightAnimRes = R.raw.anim_overcast_rain_night
     )
     object ViolentRainShowers : WeatherType(
         weatherDesc = "Violent rain showers",
-        animRes = R.raw.anim_heavy_rain
+        animRes = R.raw.anim_heavy_rain,
+        nightAnimRes = R.raw.anim_overcast_rain_night
     )
     object SlightSnowShowers : WeatherType(
         weatherDesc = "Light snow showers",
-        animRes = R.raw.anim_snowy
+        animRes = R.raw.anim_snowy,
+        nightAnimRes = R.raw.anim_mostly_clear_snow_night
     )
     object HeavySnowShowers : WeatherType(
         weatherDesc = "Heavy snow showers",
-        animRes = R.raw.anim_snowy
+        animRes = R.raw.anim_snowy,
+        nightAnimRes = R.raw.anim_overcast_snow_night
     )
     object ModerateThunderstorm : WeatherType(
         weatherDesc = "Moderate thunderstorm",
-        animRes = R.raw.anim_thunder
+        animRes = R.raw.anim_thunder,
+        nightAnimRes = R.raw.thunderstorms_night
     )
     object SlightHailThunderstorm : WeatherType(
         weatherDesc = "Thunderstorm with slight hail",
-        animRes = R.raw.anim_rainythunder
+        animRes = R.raw.anim_rainythunder,
+        nightAnimRes = R.raw.thunderstorms_overcast_rain_night
     )
     object HeavyHailThunderstorm : WeatherType(
         weatherDesc = "Thunderstorm with heavy hail",
-        animRes = R.raw.anim_rainythunder
+        animRes = R.raw.anim_rainythunder,
+        nightAnimRes = R.raw.thunderstorms_overcast_rain_night
     )
 
     companion object {
-        /**
-         * Maps a WMO weather interpretation code to the corresponding [WeatherType].
-         *
-         * Unrecognized codes fall back to [ClearSky].
-         *
-         * @param code WMO weather code from the API (e.g. Open-Meteo `weather_code`).
-         * @return The matching [WeatherType], or [ClearSky] when [code] is unknown.
-         */
         fun fromWMO(code: Int): WeatherType {
             return when (code) {
                 0 -> ClearSky

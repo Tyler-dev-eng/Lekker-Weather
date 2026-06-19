@@ -54,8 +54,9 @@ fun WeatherCard(
     locationName: String? = null
 ) {
     state.weatherInfo?.currentWeatherData?.let { data ->
+        val isNight = data.time.hour !in 6..<20
         val composition by rememberLottieComposition(
-            LottieCompositionSpec.RawRes(data.weatherType.animRes)
+            LottieCompositionSpec.RawRes(data.weatherType.animResFor(isNight))
         )
         Card(
             colors = CardDefaults.cardColors(containerColor = backgroundColor),
