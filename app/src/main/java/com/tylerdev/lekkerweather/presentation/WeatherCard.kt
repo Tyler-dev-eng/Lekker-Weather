@@ -19,8 +19,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -95,27 +93,27 @@ fun WeatherCard(
                 Spacer(modifier = Modifier.height(32.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceAround
+                    horizontalArrangement = Arrangement.SpaceAround,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     WeatherDataDisplay(
                         value = data.pressure.roundToInt(),
                         unit = "hpa",
-                        icon = ImageVector.vectorResource(id = R.drawable.ic_pressure),
-                        iconTint = Color.White,
+                        animation = if (data.pressure >= 1013) R.raw.anim_high_pressure else R.raw.anim_low_pressure,
+                        animationSize = 60.dp,
                         textStyle = TextStyle(color = Color.White)
                     )
                     WeatherDataDisplay(
                         value = data.humidity.roundToInt(),
                         unit = "%",
-                        icon = ImageVector.vectorResource(id = R.drawable.ic_drop),
-                        iconTint = Color.White,
+                        animation = R.raw.anim_humidity,
+                        animationTint = Color.White,
                         textStyle = TextStyle(color = Color.White)
                     )
                     WeatherDataDisplay(
                         value = data.windSpeed.roundToInt(),
                         unit = "km/h",
-                        icon = ImageVector.vectorResource(id = R.drawable.ic_wind),
-                        iconTint = Color.White,
+                        animation = R.raw.anim_wind_speed,
                         textStyle = TextStyle(color = Color.White)
                     )
                 }
