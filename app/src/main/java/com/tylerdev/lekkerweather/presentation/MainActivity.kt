@@ -10,7 +10,9 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.getValue
@@ -68,6 +70,8 @@ class MainActivity : ComponentActivity() {
                             state = viewModel.state,
                             backgroundColor = DeepBlue
                         )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        WeatherForecast(state = viewModel.state, modifier = Modifier)
                     }
                     if (viewModel.state.isLoading) {
                         val composition by rememberLottieComposition(
