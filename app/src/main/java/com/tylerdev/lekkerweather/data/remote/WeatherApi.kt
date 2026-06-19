@@ -19,7 +19,7 @@ interface WeatherApi {
      * @param long Longitude of the location.
      * @return Deserialised forecast payload for the requested point.
      */
-    @GET("v1/forecast?hourly=temperature_2m,weather_code,relative_humidity_2m,wind_speed_10m,pressure_msl&timezone=auto")
+    @GET("v1/forecast?hourly=temperature_2m,weather_code,relative_humidity_2m,wind_speed_10m,pressure_msl,is_day&timezone=auto")
     suspend fun getWeatherData(
         @Query("latitude") lat: Double,
         @Query("longitude") long: Double
