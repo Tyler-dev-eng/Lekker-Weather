@@ -21,7 +21,7 @@ fun WeatherForecast(
 ) {
     state.weatherInfo?.weatherDataPerDay?.get(0)?.let { data ->
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
         ) {
