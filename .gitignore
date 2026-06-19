@@ -29,3 +29,10 @@ Thumbs.db
 # Generated files
 gen/
 out/
+.gradle/9.4.1/checksums/checksums.lock
+.gradle/9.4.1/executionHistory/executionHistory.lock
+.gradle/9.4.1/fileHashes/fileHashes.bin
+.gradle/9.4.1/fileHashes/fileHashes.lock
+.gradle/9.4.1/fileHashes/resourceHashesCache.bin
+.gradle/buildOutputCleanup/buildOutputCleanup.lock
+/.gradle/9.4.1
