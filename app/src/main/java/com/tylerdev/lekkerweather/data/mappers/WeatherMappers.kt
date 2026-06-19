@@ -46,7 +46,7 @@ fun WeatherDataDto.toWeatherDataMap(): Map<Int, List<WeatherData>> {
         it.index / 24
     }.mapValues { it ->
         it.value.map { it.data }
-    }.also { println(it) }
+    }
 }
 
 /**
