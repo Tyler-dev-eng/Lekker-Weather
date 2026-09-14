@@ -4,6 +4,15 @@ A clean, modern Android weather app built with Jetpack Compose. Shows current co
 
 ---
 
+## Screenshots
+
+<p>
+  <img src="screenshots/home.png" width="45%" alt="Home screen showing current conditions, hourly forecast, and weekly outlook" />
+  <img src="screenshots/error.png" width="45%" alt="Error screen shown when location can't be retrieved" />
+</p>
+
+---
+
 ## Features
 
 - Current conditions — temperature, feels-like, weather description, pressure, humidity, wind speed
