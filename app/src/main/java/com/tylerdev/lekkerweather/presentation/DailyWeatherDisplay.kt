@@ -27,44 +27,45 @@ import kotlin.math.roundToInt
 fun DailyWeatherDisplay(
     dayLabel: String,
     entries: List<WeatherData>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
-    val dominantWeatherType = entries
-        .filter { it.isDay }
-        .groupingBy { it.weatherType }
-        .eachCount()
-        .maxByOrNull { it.value }
-        ?.key
-        ?: entries.first().weatherType
+    val dominantWeatherType =
+        entries
+            .filter { it.isDay }
+            .groupingBy { it.weatherType }
+            .eachCount()
+            .maxByOrNull { it.value }
+            ?.key
+            ?: entries.first().weatherType
     val minTemp = entries.minOf { it.temperatureCelsius }.roundToInt()
     val maxTemp = entries.maxOf { it.temperatureCelsius }.roundToInt()
     val composition by rememberLottieComposition(
-        LottieCompositionSpec.RawRes(dominantWeatherType.animRes)
+        LottieCompositionSpec.RawRes(dominantWeatherType.animRes),
     )
 
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Text(
             text = dayLabel,
             color = Color.White,
             fontSize = 16.sp,
             fontWeight = FontWeight.Medium,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
         )
         LottieAnimation(
             composition = composition,
             iterations = LottieConstants.IterateForever,
-            modifier = Modifier.size(40.dp)
+            modifier = Modifier.size(40.dp),
         )
         Text(
             text = "$minTemp° / $maxTemp°",
             color = Color.White,
             fontSize = 16.sp,
             modifier = Modifier.weight(1f),
-            textAlign = androidx.compose.ui.text.style.TextAlign.End
+            textAlign = androidx.compose.ui.text.style.TextAlign.End,
         )
     }
 }

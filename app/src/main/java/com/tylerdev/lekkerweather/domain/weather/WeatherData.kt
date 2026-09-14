@@ -15,12 +15,12 @@ import java.time.LocalDateTime
  * @property windSpeed Wind speed in km/h.
  * @property weatherType Normalised condition for UI display and animation.
  */
-data class WeatherData (
+data class WeatherData(
     val time: LocalDateTime,
     val temperatureCelsius: Double,
     val pressure: Double,
     val humidity: Double,
     val windSpeed: Double,
     val weatherType: WeatherType,
-    val isDay: Boolean
+    val isDay: Boolean,
 )

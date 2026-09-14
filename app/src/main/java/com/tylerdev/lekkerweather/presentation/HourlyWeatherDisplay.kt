@@ -26,37 +26,41 @@ import java.time.format.DateTimeFormatter
 fun HourlyWeatherDisplay(
     weatherData: WeatherData,
     modifier: Modifier = Modifier,
-    textColor: Color = Color.White
+    textColor: Color = Color.White,
 ) {
-    val formattedTime = remember(weatherData) {
-        weatherData.time.format(DateTimeFormatter.ofPattern("HH:mm"))
-    }
+    val formattedTime =
+        remember(weatherData) {
+            weatherData.time.format(DateTimeFormatter.ofPattern("HH:mm"))
+        }
 
     val composition by rememberLottieComposition(
-        LottieCompositionSpec.RawRes(weatherData.weatherType.animResFor(isNight = !weatherData.isDay))
+        LottieCompositionSpec.RawRes(
+            weatherData.weatherType.animResFor(isNight = !weatherData.isDay),
+        ),
     )
 
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceBetween
+        verticalArrangement = Arrangement.SpaceBetween,
     ) {
         Text(
             text = formattedTime,
-            color = Color.LightGray
+            color = Color.LightGray,
         )
 
         LottieAnimation(
             composition = composition,
             iterations = LottieConstants.IterateForever,
-            modifier = Modifier
-                .size(40.dp)
+            modifier =
+                Modifier
+                    .size(40.dp),
         )
 
         Text(
             text = "${weatherData.temperatureCelsius}°C",
             color = textColor,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
         )
     }
 }

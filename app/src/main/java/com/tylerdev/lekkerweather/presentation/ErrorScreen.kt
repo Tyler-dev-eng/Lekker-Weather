@@ -29,35 +29,36 @@ import com.tylerdev.lekkerweather.presentation.ui.theme.DeepBlue
 fun ErrorScreen(
     message: String,
     onRetry: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val composition by rememberLottieComposition(
-        LottieCompositionSpec.RawRes(R.raw.anim_foggy)
+        LottieCompositionSpec.RawRes(R.raw.anim_foggy),
     )
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(32.dp),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .padding(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
     ) {
         LottieAnimation(
             composition = composition,
             iterations = LottieConstants.IterateForever,
-            modifier = Modifier.size(150.dp)
+            modifier = Modifier.size(150.dp),
         )
         Spacer(modifier = Modifier.height(24.dp))
         Text(
             text = message,
             color = Color.White,
             fontSize = 16.sp,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
         Spacer(modifier = Modifier.height(24.dp))
         Button(
             onClick = onRetry,
-            colors = ButtonDefaults.buttonColors(containerColor = DeepBlue)
+            colors = ButtonDefaults.buttonColors(containerColor = DeepBlue),
         ) {
             Text(text = "Retry", color = Color.White)
         }

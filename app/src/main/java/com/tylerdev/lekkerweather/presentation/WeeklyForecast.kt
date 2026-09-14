@@ -20,31 +20,36 @@ import java.util.Locale
 @Composable
 fun WeeklyForecast(
     state: WeatherState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val dataPerDay = state.weatherInfo?.weatherDataPerDay ?: return
 
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
     ) {
         Text(
             text = "This Week",
             fontSize = 20.sp,
-            color = Color.White
+            color = Color.White,
         )
         Spacer(modifier = Modifier.height(16.dp))
         dataPerDay.entries
             .filter { it.key > 0 }
             .sortedBy { it.key }
             .forEach { (_, entries) ->
-                val dayLabel = entries.firstOrNull()?.time?.dayOfWeek
-                    ?.getDisplayName(TextStyle.FULL, Locale.getDefault())
-                    ?: return@forEach
+                val dayLabel =
+                    entries
+                        .firstOrNull()
+                        ?.time
+                        ?.dayOfWeek
+                        ?.getDisplayName(TextStyle.FULL, Locale.getDefault())
+                        ?: return@forEach
                 DailyWeatherDisplay(
                     dayLabel = dayLabel,
-                    entries = entries
+                    entries = entries,
                 )
                 Spacer(modifier = Modifier.height(12.dp))
             }
